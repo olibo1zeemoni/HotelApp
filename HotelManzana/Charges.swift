@@ -10,7 +10,7 @@ import Foundation
 struct Charges{
     var numberOfNightsTotal: Int
     var roomTypeTotal: Int
-        //room.all.price
+        
     
     var wifiTotal: Int
 }
