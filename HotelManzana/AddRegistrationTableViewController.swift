@@ -94,6 +94,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         updateRoomType()
         updateCharges()
         updateWifiState()
+        updateTotal()
 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -140,6 +141,8 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     @IBAction func datePickerValueChanged(_ sender: UIDatePicker) {
         updateDateViews()
         updateCharges()
+        updateWifiState()
+        updateTotal()
     }
     
     let checkInDatePickerCellIndexPath = IndexPath(row: 1, section: 1)
@@ -211,6 +214,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         updateCharges()
         
         updateWifiState()
+        updateTotal()
     }
     
     
@@ -273,6 +277,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     
     override func viewWillAppear(_ animated: Bool) {
         updateCharges()
+        updateTotal()
     }
     
     func updateWifiState(){
@@ -294,6 +299,20 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     }
     
     func updateTotal(){
+        let components = calendar.dateComponents([Calendar.Component.day], from: checkInDatePicker.date , to: checkOutDatePicker.date)
+        let numberOfNights =  components.day!
+        
+        var total = 0
+        if let roomType = roomType,
+           wifiSwitch.isOn == true{
+        
+            total =  numberOfNights * (10 + roomType.price)
+            totalCharges.text = String(describing: total)
+            return
+        } else {
+            return
+        }
+       // totalCharges.text = String(describing: total)
         
     }
     
