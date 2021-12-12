@@ -8,9 +8,13 @@
 import Foundation
 
 struct Charges{
-    var numberOfNightsTotal: Int
-    var roomTypeTotal: Int
-        
     
-    var wifiTotal: Int
+    var numberOfNights: Int = 1
+    var roomTypeTotal: Int
+    var wifiTotal: Int {
+        return numberOfNights * 10
+    }
+    var total: Int{
+       return roomTypeTotal + wifiTotal
+    }
 }

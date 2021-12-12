@@ -8,6 +8,7 @@ import UIKit
 
 class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeTableViewControllerDelegate {
     
+    
     var registration: Registration?  {
         guard let roomType = roomType else {return nil}
         
@@ -19,11 +20,17 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         let numberOfAdults = Int(adultsStepper.value)
         let numberOfChildren = Int(childrenStepper.value)
         let hasWiFi = wifiSwitch.isOn
+        let calendar = Calendar.current
+            let components = calendar.dateComponents([Calendar.Component.day], from: checkInDate, to: checkOutDate)
+        let numberOfNights = components.day!
         
-        return Registration(firstName: firstName, lastName: lastName, emailAddress: email, checkInDate: checkInDate, checkOutDate: checkOutDate, numberOfChildren: numberOfChildren, numberOfAdults: numberOfAdults, wifi: hasWiFi, roomType: roomType)
+        let charges = Charges(numberOfNights: numberOfNights, roomTypeTotal: numberOfNights * roomType.price)
+        
+        return Registration(firstName: firstName, lastName: lastName, emailAddress: email, checkInDate: checkInDate, checkOutDate: checkOutDate, numberOfChildren: numberOfChildren, numberOfAdults: numberOfAdults, wifi: hasWiFi, roomType: roomType, charges: charges)
     }
     
-    
+   
+   
     
     
    
@@ -45,7 +52,31 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     @IBOutlet weak var wifiSwitch: UISwitch!
     
     @IBOutlet weak var roomTypeLabel: UILabel!
+    
+    @IBOutlet weak var numberOfNightsLabel: UILabel!
+    @IBOutlet weak var fromToDatesLabel: UILabel!
+    
+    @IBOutlet weak var totalRoomCharges: UILabel!
+    @IBOutlet weak var roomChargePerNight: UILabel!
+    @IBOutlet weak var totalWifiCharges: UILabel!
+    @IBOutlet weak var wifiIncudedLabel: UILabel!
+    @IBOutlet weak var totalCharges: UILabel!
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     var roomType: RoomType?
+    
+    
+        
     
     
     
@@ -61,6 +92,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         updateDateViews()
         updateGuests()
         updateRoomType()
+        updateCharges()
 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -100,8 +132,13 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         return dateFormatter
     }()
     
+    
+   
+    
+    
     @IBAction func datePickerValueChanged(_ sender: UIDatePicker) {
         updateDateViews()
+        updateCharges()
     }
     
     let checkInDatePickerCellIndexPath = IndexPath(row: 1, section: 1)
@@ -159,6 +196,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     
     @IBAction func stepperValueChanged(_ sender: UIStepper){
         updateGuests()
+        updateCharges()
         
     }
     
@@ -198,6 +236,22 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         dismiss(animated: true, completion: nil)
     }
     
+    func updateCharges(){
+        //let checkinDate = checkInDatePicker.date
+        //let checkOutDate = checkOutDatePicker.date
+        let calendar = Calendar.current
+    let components = calendar.dateComponents([Calendar.Component.day], from: checkInDatePicker.date , to: checkOutDatePicker.date)
+        let numberOfNights =  components.day!
+        numberOfNightsLabel.text = String(describing: numberOfNights)
+        
+        fromToDatesLabel.text = "Jan 6 2022 - Jan 10 2022"
+        totalRoomCharges.text = ""
+        roomChargePerNight.text = "Penthouse Suite @ $380/night"
+        totalWifiCharges.text = "$ 40"
+        wifiIncudedLabel.text = "yes"
+        totalCharges.text = "$1276"
+        
+    }
     
     
     
