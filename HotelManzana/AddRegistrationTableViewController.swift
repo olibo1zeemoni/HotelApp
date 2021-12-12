@@ -8,7 +8,7 @@ import UIKit
 
 class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeTableViewControllerDelegate {
     
-    
+    let calendar = Calendar.current
     var registration: Registration?  {
         guard let roomType = roomType else {return nil}
         
@@ -20,8 +20,8 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         let numberOfAdults = Int(adultsStepper.value)
         let numberOfChildren = Int(childrenStepper.value)
         let hasWiFi = wifiSwitch.isOn
-        let calendar = Calendar.current
-            let components = calendar.dateComponents([Calendar.Component.day], from: checkInDate, to: checkOutDate)
+       
+        let components = calendar.dateComponents([Calendar.Component.day], from: checkInDate, to: checkOutDate)
         let numberOfNights = components.day!
         
         let charges = Charges(numberOfNights: numberOfNights, roomTypeTotal: numberOfNights * roomType.price)
@@ -88,11 +88,12 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         let midnightToday = Calendar.current.startOfDay(for: Date())
         checkInDatePicker.minimumDate = midnightToday
         checkInDatePicker.date = midnightToday
-        
+        wifiSwitch.isOn = false
         updateDateViews()
         updateGuests()
         updateRoomType()
         updateCharges()
+        updateWifiState()
 
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -207,7 +208,9 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     
     
     @IBAction func wifiSwitchChanged(_ sender: UISwitch) {
+        updateCharges()
         
+        updateWifiState()
     }
     
     
@@ -222,6 +225,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     func selectRoomTypeTableViewController(_ controller: SelectRoomTypeTableViewController, didSelect roomType: RoomType) {
         self.roomType = roomType
         updateRoomType()
+        
     }
     
     
@@ -229,6 +233,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         let selectRoomTypeController = SelectRoomTypeTableViewController(coder: coder)
         selectRoomTypeController?.delegate = self
         selectRoomTypeController?.roomType = roomType
+        //updateCharges()
         return selectRoomTypeController
     }
     
@@ -236,25 +241,61 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
         dismiss(animated: true, completion: nil)
     }
     
+    
+    
     func updateCharges(){
-        //let checkinDate = checkInDatePicker.date
-        //let checkOutDate = checkOutDatePicker.date
-        let calendar = Calendar.current
-    let components = calendar.dateComponents([Calendar.Component.day], from: checkInDatePicker.date , to: checkOutDatePicker.date)
+        
+        let components = calendar.dateComponents([Calendar.Component.day], from: checkInDatePicker.date , to: checkOutDatePicker.date)
         let numberOfNights =  components.day!
         numberOfNightsLabel.text = String(describing: numberOfNights)
         
-        fromToDatesLabel.text = "Jan 6 2022 - Jan 10 2022"
-        totalRoomCharges.text = ""
-        roomChargePerNight.text = "Penthouse Suite @ $380/night"
-        totalWifiCharges.text = "$ 40"
-        wifiIncudedLabel.text = "yes"
-        totalCharges.text = "$1276"
+        fromToDatesLabel.text = "\(dateFormatter.string(from: checkInDatePicker.date)) - \(dateFormatter.string(from: checkOutDatePicker.date))"
+        guard let roomType = roomType else {
+            totalRoomCharges.text = "0"
+            
+            totalCharges.text = "0"
+            totalWifiCharges.text = "0"
+            //roomChargePerNight.text = ""
+            return}
+        
+        let totalRoomcharge = roomType.price * numberOfNights
+        roomChargePerNight.text =  String(describing: roomType.name) + " @ $" + String(describing: roomType.price)
+        totalRoomCharges.text = String(describing: (totalRoomcharge))
+        
+        
+        
+        //totalWifiCharges.text = "$ 40"
+        //wifiIncudedLabel.text = "yes"
+        //totalCharges.text = "$1276"
         
     }
     
     
+    override func viewWillAppear(_ animated: Bool) {
+        updateCharges()
+    }
     
+    func updateWifiState(){
+        
+        let components = calendar.dateComponents([Calendar.Component.day], from: checkInDatePicker.date , to: checkOutDatePicker.date)
+        let numberOfNights =  components.day!
+       var totalWifiCharge = 0
+        
+        if wifiSwitch.isOn == true{
+            totalWifiCharge = numberOfNights * 10
+            wifiIncudedLabel.text = "yes"
+        }else{wifiIncudedLabel.text = "no"}
+        
+        totalWifiCharges.text = String(describing: totalWifiCharge)
+        
+        
+        
+        
+    }
+    
+    func updateTotal(){
+        
+    }
     
     
     

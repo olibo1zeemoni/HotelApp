@@ -40,7 +40,7 @@ class RegistrationTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RegistrationCell", for: indexPath)
         let registrations = registrations[indexPath.row]
         cell.textLabel?.text = "\(registrations.firstName) \(registrations.lastName)"
-        cell.detailTextLabel?.text = " \(dateFormatter.string(from: registrations.checkInDate)) \(dateFormatter.string(from: registrations.checkOutDate)) \(registrations.roomType.name)"
+        cell.detailTextLabel?.text = " \(dateFormatter.string(from: registrations.checkInDate)) - \(dateFormatter.string(from: registrations.checkOutDate)) \(registrations.roomType.name)"
        
         return cell
     }
